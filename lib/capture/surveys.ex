@@ -89,23 +89,21 @@ defmodule Capture.Surveys do
   end
 
   defp count_value_total(%{"survey_id" => survey_id} = params, value) do
-    response = if params["question_id"] do
-      Response
-      |> where(
-        survey_id: ^survey_id,
-        question_id: ^params["question_id"],
-        value: ^value
-      )
-    else
-      Response
-      |> where(
-        survey_id: ^survey_id,
-        value: ^value
-      )
-    end 
-
-    response
+    count_value_total_query(params, value) 
     |> Repo.all
     |> Enum.count
+  end
+
+  def count_value_total_query(%{"survey_id" => survey_id, "question_id" => question_id} = params, value) do 
+    count_value_total_query(%{"survey_id" => survey_id}, value)
+    |> where( question_id: ^question_id) 
+  end
+
+  def count_value_total_query(%{"survey_id" => survey_id} = params, value) do 
+    Response 
+    |> where(
+      survey_id: ^survey_id,
+      value: ^value
+    ) 
   end
 end

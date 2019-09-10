@@ -40,12 +40,12 @@ defmodule Capture.SurveysTest do
     @response_4 %{"question_id" => 2, "survey_id" => 2, "user_id" => 1,"value" => 3}
 
     setup do
-      response_1 = %Response{} |> Response.changeset(@response_1) |> Repo.insert!
-      response_2 = %Response{} |> Response.changeset(@response_2) |> Repo.insert!
-      response_3 = %Response{} |> Response.changeset(@response_3) |> Repo.insert!
-      response_4 = %Response{} |> Response.changeset(@response_4) |> Repo.insert!
+      %Response{} |> Response.changeset(@response_1) |> Repo.insert!
+      %Response{} |> Response.changeset(@response_2) |> Repo.insert!
+      %Response{} |> Response.changeset(@response_3) |> Repo.insert!
+      %Response{} |> Response.changeset(@response_4) |> Repo.insert!
       # I don't want this thing :/
-      {:ok, response_1: response_1}
+      :ok
     end
 
     test "counts the number of responses for each value, for given survey_id" do
