@@ -76,4 +76,24 @@ defmodule Capture.Surveys do
     )
     |> Repo.one
   end
+
+  def survey_answers(survey_id) do
+    %{
+      ones: count_value_total(survey_id, 1),
+      twos: count_value_total(survey_id, 2),
+      threes: count_value_total(survey_id, 3),
+      fours: count_value_total(survey_id, 4),
+      fives: count_value_total(survey_id, 5),
+    }
+  end
+
+  defp count_value_total(survey_id, value) do
+    Response
+    |> where(
+      survey_id: ^survey_id,
+      value: ^value
+    )
+    |> Repo.all
+    |> Enum.count
+  end
 end
