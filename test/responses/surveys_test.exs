@@ -32,4 +32,28 @@ defmodule Capture.SurveysTest do
       assert updated_response.value == 1
     end
   end
+
+  describe "survey_answers" do
+    @response_1 %{"question_id" => 1, "survey_id" => 1, "user_id" => 1,"value" => 3}
+    @response_2 %{"question_id" => 1, "survey_id" => 1, "user_id" => 2,"value" => 3}
+    @response_3 %{"question_id" => 2, "survey_id" => 2, "user_id" => 1,"value" => 3}
+
+    setup do
+      response_1 = %Response{} |> Response.changeset(@response_1) |> Repo.insert!
+      response_2 = %Response{} |> Response.changeset(@response_2) |> Repo.insert!
+      response_3 = %Response{} |> Response.changeset(@response_3) |> Repo.insert!
+      # I don't want this thing :/
+      {:ok, response_1: response_1}
+    end
+
+    test "counts the number of responses for each value, for given survey_id" do
+      assert Surveys.survey_answers(1) == %{
+          ones: 0,
+          twos: 0,
+          threes: 2,
+          fours: 0,
+          fives: 0,
+        }
+    end
+  end
 end
