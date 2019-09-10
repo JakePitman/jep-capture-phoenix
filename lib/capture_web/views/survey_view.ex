@@ -2,8 +2,8 @@ defmodule CaptureWeb.SurveyView do
   use CaptureWeb, :view
   alias CaptureWeb.SurveyView
 
-  def render("survey.json", %{survey_answers: survey_answers}) do
-    survey_answers
+  def render("values_tally.json", %{values_tally: values_tally}) do
+    values_tally
   end
 end
 

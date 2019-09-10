@@ -77,22 +77,34 @@ defmodule Capture.Surveys do
     |> Repo.one
   end
 
-  def survey_answers(survey_id) do
+  def values_tally(%{"survey_id" => survey_id} = params) do
+    params["question_id"] |> IO.inspect(label: "PARAMS")
     %{
-      ones: count_value_total(survey_id, 1),
-      twos: count_value_total(survey_id, 2),
-      threes: count_value_total(survey_id, 3),
-      fours: count_value_total(survey_id, 4),
-      fives: count_value_total(survey_id, 5),
+      ones: count_value_total(params, 1),
+      twos: count_value_total(params, 2),
+      threes: count_value_total(params, 3),
+      fours: count_value_total(params, 4),
+      fives: count_value_total(params, 5),
     }
   end
 
-  defp count_value_total(survey_id, value) do
-    Response
-    |> where(
-      survey_id: ^survey_id,
-      value: ^value
-    )
+  defp count_value_total(%{"survey_id" => survey_id} = params, value) do
+    response = if params["question_id"] do
+      Response
+      |> where(
+        survey_id: ^survey_id,
+        question_id: ^params["question_id"],
+        value: ^value
+      )
+    else
+      Response
+      |> where(
+        survey_id: ^survey_id,
+        value: ^value
+      )
+    end 
+
+    response
     |> Repo.all
     |> Enum.count
   end

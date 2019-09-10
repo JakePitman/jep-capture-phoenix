@@ -3,9 +3,9 @@ defmodule CaptureWeb.SurveyController do
   # action_fallback CaptureWeb.FallbackController
   alias Capture.Surveys
 
-  def show(conn, %{"id" => id}) do
-    survey_answers = Surveys.survey_answers(id)
+  def show(conn, %{"survey_id" => _} = params) do
+    values_tally = Surveys.values_tally(params)
     conn
-    |> render("survey.json", survey_answers: survey_answers)
+    |> render("values_tally.json", values_tally: values_tally)
   end
 end
