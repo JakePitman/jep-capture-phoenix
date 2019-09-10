@@ -68,4 +68,12 @@ defmodule Capture.Surveys do
     )
     |> Repo.one
   end
+
+  def find_response(id) do
+    Response
+    |> where(
+      id: ^id
+    )
+    |> Repo.one
+  end
 end
