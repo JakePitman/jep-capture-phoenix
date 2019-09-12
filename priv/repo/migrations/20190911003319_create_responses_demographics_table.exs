@@ -5,7 +5,6 @@ defmodule Capture.Repo.Migrations.CreateResponsesDemographicsTable do
     create table(:response_demographic, primary_key: false) do
       add(:response_id, references(:responses, on_delete: :delete_all), primary_key: true)
       add(:demographic_id, references(:demographics, on_delete: :delete_all), primary_key: true)
-      timestamps()
     end
 
     create(index(:response_demographic, [:response_id]))

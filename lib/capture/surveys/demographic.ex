@@ -15,12 +15,10 @@ defmodule Capture.Surveys.Demographic do
       join_through: "response_demographic",
       on_replace: :delete
     )
-    
     timestamps()
   end
 
   def handle_demographic(demographic_map) do
-    demographic_map |> IO.inspect(label: "CURRENT DEMO MAP: ")
     find_demographic(demographic_map)
     |> case do
       nil -> 
@@ -35,7 +33,7 @@ defmodule Capture.Surveys.Demographic do
   def create_demographic(attrs \\ %{}) do
     %Demographic{}
     |> Demographic.changeset(attrs)
-    |> Repo.insert()
+    |> Repo.insert!()
   end
 
 

@@ -17,7 +17,6 @@ defmodule Capture.Surveys.Response do
       join_through: "response_demographic",
       on_replace: :delete
     )
-
     timestamps()
   end
 
@@ -65,6 +64,11 @@ defmodule Capture.Surveys.Response do
     response
     |> Response.changeset(attrs)
     |> Repo.update()
+  end
+
+  def associate_with_demographics(%Response{} = response, demographics) do
+    changeset = response |> Repo.preload(:demographics) |> change |> put_assoc(:demographics, demographics)
+    |> IO.inspect(label: "PUT ASSOC") |> Repo.update
   end
 
   def find_response(%{

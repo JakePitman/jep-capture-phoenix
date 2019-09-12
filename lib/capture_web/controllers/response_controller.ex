@@ -17,8 +17,11 @@ defmodule CaptureWeb.ResponseController do
     |> Response.handle_response
 
     unless is_nil(params["demographics"]) do
-      Demographic.parse_demographics(params["demographics"])
-      |> Enum.each(fn demographic -> { Demographic.handle_demographic(demographic) } end)
+      demographics = Demographic.parse_demographics(params["demographics"])
+      |> Enum.map(fn demographic -> Demographic.handle_demographic(demographic) end)
+
+      IO.inspect(demographics, label: "DEMOGRAPHICS")
+      response |> Response.associate_with_demographics(demographics)
     end
 
     conn
