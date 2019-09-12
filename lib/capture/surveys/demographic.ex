@@ -3,7 +3,7 @@ defmodule Capture.Surveys.Demographic do
   import Ecto.Changeset
   alias Capture.Surveys
 
-  schema "demographic" do
+  schema "demographics" do
     field :name, :string
     field :value, :string
     many_to_many(

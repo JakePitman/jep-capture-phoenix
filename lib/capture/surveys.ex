@@ -7,6 +7,7 @@ defmodule Capture.Surveys do
   alias Capture.Repo
 
   alias Capture.Surveys.Response
+  alias Capture.Surveys.Demographic
 
   def handle_response(params) do
     find_response(params)
@@ -15,8 +16,21 @@ defmodule Capture.Surveys do
         create_response(params)
       response ->
         update_response(response, params)
-      end
     end
+  end
+
+  def handle_demographic(demographic_map) do
+    demographic_map |> IO.inspect(label: "CURRENT DEMO MAP: ")
+    find_demographic(demographic_map)
+    |> case do
+      nil -> 
+        demographic_map
+        |> IO.inspect(label: "Inserting new demographic: ")
+        |> create_demographic()
+      demographic ->
+        demographic |> IO.inspect(label: "Existing demographic: ")
+    end
+  end
 
 
   @doc """
@@ -34,6 +48,12 @@ defmodule Capture.Surveys do
   def create_response(attrs \\ %{}) do
     %Response{}
     |> Response.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def create_demographic(attrs \\ %{}) do
+    %Demographic{}
+    |> Demographic.changeset(attrs)
     |> Repo.insert()
   end
 
@@ -77,8 +97,28 @@ defmodule Capture.Surveys do
     |> Repo.one
   end
 
+  def parse_demographics(demographics_string) do
+    demographics_string
+    |> String.split("_")
+    |> Enum.map(fn string_pair -> 
+        list_pair = String.split(string_pair, "-") 
+        %{name: Enum.at(list_pair, 0),value: Enum.at(list_pair, 1)  }
+      end )
+  end
+
+  def find_demographic(%{
+    value: value,
+    name: name,
+  }) do
+    Demographic
+    |> where(
+      name: ^name,
+      value: ^value,
+    )
+    |> Repo.one
+  end
+
   def values_tally(%{"survey_id" => survey_id} = params) do
-    params["question_id"] |> IO.inspect(label: "PARAMS")
     %{
       ones: count_value_total(params, 1),
       twos: count_value_total(params, 2),

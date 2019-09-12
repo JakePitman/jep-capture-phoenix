@@ -15,6 +15,11 @@ defmodule CaptureWeb.ResponseController do
     {:ok, %Response{} = response} = params
     |> Surveys.handle_response
 
+    unless is_nil(params["demographics"]) do
+      Surveys.parse_demographics(params["demographics"])
+      |> Enum.each(fn demographic -> { Surveys.handle_demographic(demographic) } end)
+    end
+
     conn
     |> put_status(:created)
     |> put_resp_header("location", Routes.response_path(conn, :show, response))

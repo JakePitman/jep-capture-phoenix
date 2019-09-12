@@ -28,6 +28,7 @@ defmodule Capture.Surveys.Response do
   def changeset_update_demographics(%{} = response, demographics) do
     response
     |> cast(%{}, @required_fields)
+    |> IO.inspect(label: "CAST RESULT")
     # associate demographics to the response
     |> put_assoc(:demographics, demographics)
   end
