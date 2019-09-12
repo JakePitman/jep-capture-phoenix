@@ -1,7 +1,10 @@
 defmodule Capture.Surveys.Demographic do
+  import Ecto.Query, warn: false
+  alias Capture.Repo
   use Ecto.Schema
   import Ecto.Changeset
   alias Capture.Surveys
+  alias Capture.Surveys.Demographic
 
   schema "demographics" do
     field :name, :string
@@ -14,6 +17,47 @@ defmodule Capture.Surveys.Demographic do
     )
     
     timestamps()
+  end
+
+  def handle_demographic(demographic_map) do
+    demographic_map |> IO.inspect(label: "CURRENT DEMO MAP: ")
+    find_demographic(demographic_map)
+    |> case do
+      nil -> 
+        demographic_map
+        |> IO.inspect(label: "Inserting new demographic: ")
+        |> create_demographic()
+      demographic ->
+        demographic |> IO.inspect(label: "Existing demographic: ")
+    end
+  end
+
+  def create_demographic(attrs \\ %{}) do
+    %Demographic{}
+    |> Demographic.changeset(attrs)
+    |> Repo.insert()
+  end
+
+
+  def parse_demographics(demographics_string) do
+    demographics_string
+    |> String.split("_")
+    |> Enum.map(fn string_pair -> 
+        list_pair = String.split(string_pair, "-") 
+        %{name: Enum.at(list_pair, 0),value: Enum.at(list_pair, 1)  }
+      end )
+  end
+
+  def find_demographic(%{
+    value: value,
+    name: name,
+  }) do
+    Demographic
+    |> where(
+      name: ^name,
+      value: ^value,
+    )
+    |> Repo.one
   end
 
   @doc false

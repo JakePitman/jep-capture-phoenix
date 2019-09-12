@@ -3,6 +3,7 @@ defmodule CaptureWeb.ResponseController do
 
   alias Capture.Surveys
   alias Capture.Surveys.Response
+  alias Capture.Surveys.Demographic
 
   action_fallback CaptureWeb.FallbackController
 
@@ -13,11 +14,11 @@ defmodule CaptureWeb.ResponseController do
     "value" => value
   } = params) do
     {:ok, %Response{} = response} = params
-    |> Surveys.handle_response
+    |> Response.handle_response
 
     unless is_nil(params["demographics"]) do
-      Surveys.parse_demographics(params["demographics"])
-      |> Enum.each(fn demographic -> { Surveys.handle_demographic(demographic) } end)
+      Demographic.parse_demographics(params["demographics"])
+      |> Enum.each(fn demographic -> { Demographic.handle_demographic(demographic) } end)
     end
 
     conn
@@ -27,7 +28,7 @@ defmodule CaptureWeb.ResponseController do
   end
 
   def show(conn, %{"id" => id}) do
-    response = Surveys.find_response(id)
+    response = Response.find_response(id)
     conn
     |> render("show.json", response: response)
   end
