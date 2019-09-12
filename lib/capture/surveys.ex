@@ -11,6 +11,7 @@ defmodule Capture.Surveys do
 
 
   def values_tally(%{"survey_id" => survey_id} = params) do
+    params |> IO.inspect(label: "PARAMS BEFORE COUNT_VALUE")
     %{
       ones: count_value_total(params, 1),
       twos: count_value_total(params, 2),
@@ -24,6 +25,12 @@ defmodule Capture.Surveys do
     count_value_total_query(params, value) 
     |> Repo.all
     |> Enum.count
+  end
+
+  def count_value_total_query(%{"survey_id" => survey_id, "question_id" => question_id, "demographic" => demographic}, value) do
+    count_value_total_query(%{"survey_id" => survey_id, "question_id" => question_id}, value)
+    |> Ecto.Query.join(:inner, [response], demographic in assoc(response, :demographics)) 
+    |> Ecto.Query.where([_r, demographic], demographic.value == ^demographic)
   end
 
   def count_value_total_query(%{"survey_id" => survey_id, "question_id" => question_id} = params, value) do 
